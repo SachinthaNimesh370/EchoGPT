@@ -12,7 +12,8 @@ export default function FirstPage({ navigation }) {
     const isValid = await checkAPIKey(apiKey);
     if (isValid) {
       // Navigate to the second page if the API key is valid
-      navigation.navigate('ChatPage');
+    //   navigation.navigate('ChatPage');
+      navigation.navigate('ChatPage', { apiKey: apiKey });
     } else {
       // Show an alert if the API key is invalid
       Alert.alert('Invalid API Key', 'Please enter a valid API key.');
