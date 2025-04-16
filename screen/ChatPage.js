@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import Button from '../component/Button';
+import TextField from '../component/TextField';
 
 export default function ChatPage({ route }) {
-  const { apiKey } = route.params; // 👈 get API key from navigation params
+  const { apiKey } = route.params;
 
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const flatListRef = useRef(null);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -21,7 +32,7 @@ export default function ChatPage({ route }) {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -31,8 +42,8 @@ export default function ChatPage({ route }) {
       });
 
       const data = await response.json();
-
       const reply = data?.choices?.[0]?.message?.content || 'Something went wrong';
+
       setMessages([...updatedMessages, { role: 'assistant', content: reply }]);
     } catch (error) {
       setMessages([...updatedMessages, { role: 'assistant', content: 'Error fetching response.' }]);
@@ -40,6 +51,10 @@ export default function ChatPage({ route }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
 
   const renderItem = ({ item }) => (
     <View
@@ -53,76 +68,73 @@ export default function ChatPage({ route }) {
   );
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <FlatList
+        ref={flatListRef}
         data={messages}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.chatContainer}
       />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type your message..."
-          value={input}
-          onChangeText={setInput}
-        />
-        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+      <View style={styles.inputRow}>
+        <View style={styles.inputFlex}>
+          <TextField
+            placeholder="Type your message..."
+            value={input}
+            onChangeText={setInput}
+          />
+        </View>
+        <Button text="Send" onPress={sendMessage} />
       </View>
 
-      {loading && <ActivityIndicator size="small" color="#0000ff" style={{ marginBottom: 10 }} />}
-    </View>
+      {loading && <ActivityIndicator size="small" color="#00AFFF" style={{ marginBottom: 10 }} />}
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 40, backgroundColor: '#fff' },
+  container: {
+    flex: 1,
+    backgroundColor: '#252D3C',
+    paddingTop: 40,
+  },
   chatContainer: {
     padding: 10,
+    paddingBottom: 20,
     flexGrow: 1,
   },
   messageContainer: {
-    padding: 10,
+    padding: 12,
     marginVertical: 5,
     borderRadius: 10,
     maxWidth: '80%',
   },
   userMessage: {
-    backgroundColor: '#DCF8C6',
+    backgroundColor: '#3C9EEA',
     alignSelf: 'flex-end',
   },
   assistantMessage: {
-    backgroundColor: '#E1E1E1',
+    backgroundColor: '#3C4A5A',
     alignSelf: 'flex-start',
   },
   messageText: {
     fontSize: 16,
+    color: '#fff',
   },
-  inputContainer: {
+  inputRow: {
     flexDirection: 'row',
     padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
     alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#3B4455',
+    backgroundColor: '#1F2733',
   },
-  input: {
+  inputFlex: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
     marginRight: 10,
-  },
-  sendButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  sendButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
 });
