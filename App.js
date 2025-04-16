@@ -1,21 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Button from './component/Button';
-import TextField from './component/TextField';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import FirstPage from './screen/FirstPage';
+import ChatPage from './screen/ChatPage'; // Make sure to create this file
 
+// Create a Stack Navigator
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [text, setText] = useState('');
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button text="Get Started" onPress={() => alert('Pressed!')} />
-      <TextField
-        placeholder="Your name"
-        value={text}
-        onChangeText={(val) => setText(val)}
-      />
-    </View>
+    <NavigationContainer>
+    <Stack.Navigator initialRouteName="FirstPage">
+      <Stack.Screen name="FirstPage" component={FirstPage} />
+      <Stack.Screen name="ChatPage" component={ChatPage} />
+    </Stack.Navigator>
+  </NavigationContainer>
   );
 }
 
