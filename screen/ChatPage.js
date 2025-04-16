@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
-export default function ChatPage() {
-  const [apiKey, setApiKey] = useState(''); // You can hardcode this temporarily
+export default function ChatPage({ route }) {
+  const { apiKey } = route.params; // 👈 get API key from navigation params
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function ChatPage() {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`, // Set your API key here
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -53,15 +54,6 @@ export default function ChatPage() {
 
   return (
     <View style={styles.container}>
-      {/* You can remove the API key field if it's already passed from the first screen */}
-      <TextInput
-        placeholder="Enter your OpenAI API key"
-        style={styles.apiKeyInput}
-        value={apiKey}
-        onChangeText={setApiKey}
-        secureTextEntry
-      />
-
       <FlatList
         data={messages}
         renderItem={renderItem}
@@ -88,13 +80,6 @@ export default function ChatPage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 40, backgroundColor: '#fff' },
-  apiKeyInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    margin: 10,
-    padding: 8,
-    borderRadius: 8,
-  },
   chatContainer: {
     padding: 10,
     flexGrow: 1,
