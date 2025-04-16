@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Alert } from 'react-native';
 import Button from '../component/Button';
 import TextField from '../component/TextField';
+import ChatPage from './ChatPage';
 
 export default function FirstPage({ navigation }) {
   const [apiKey, setApiKey] = useState('');
@@ -11,11 +12,12 @@ export default function FirstPage({ navigation }) {
     const isValid = await checkAPIKey(apiKey);
     if (isValid) {
       // Navigate to the second page if the API key is valid
-      navigation.navigate('SecondPage');
+      navigation.navigate('ChatPage');
     } else {
       // Show an alert if the API key is invalid
       Alert.alert('Invalid API Key', 'Please enter a valid API key.');
     }
+    setApiKey('');
   };
 
   // Function to check if the API key is valid by calling OpenAI API
@@ -42,6 +44,7 @@ export default function FirstPage({ navigation }) {
 
         // If we get a valid response and choices are present, return true
         if (data.choices && data.choices.length > 0) {
+            setApiKey('');
           console.log('API Key is valid:', data.choices[0].message.content);  // Log the response from GPT
           return true;
         }
