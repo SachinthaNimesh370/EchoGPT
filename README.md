@@ -44,7 +44,7 @@ EchoGPT/
 
 1. Clone the repo
     ```
-    git clone https://github.com/your-username/EchoGPT.git
+    git clone https://github.com/SachinthaNimesh370/EchoGPT.git
     cd EchoGPT
     ```
 2. Install dependencies
