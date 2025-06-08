@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
-  Text,
   FlatList,
   StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Text,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
-import Button from '../component/Button';
-import TextField from '../component/TextField';
+import Markdown from 'react-native-markdown-display'; // ✅ Use maintained package
 
 export default function ChatPage({ route }) {
   const { apiKey } = route.params;
@@ -52,10 +56,6 @@ export default function ChatPage({ route }) {
     }
   };
 
-  useEffect(() => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  }, [messages]);
-
   const renderItem = ({ item }) => (
     <View
       style={[
@@ -63,47 +63,65 @@ export default function ChatPage({ route }) {
         item.role === 'user' ? styles.userMessage : styles.assistantMessage,
       ]}
     >
-      <Text style={styles.messageText}>{item.content}</Text>
+      {item.role === 'user' ? (
+        <Text style={styles.userText}>{item.content}</Text>
+      ) : (
+        <Markdown style={markdownStyles}>{item.content}</Markdown>
+      )}
     </View>
   );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={renderItem}
-        keyExtractor={(_, index) => index.toString()}
-        contentContainerStyle={styles.chatContainer}
-      />
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              renderItem={renderItem}
+              keyExtractor={(_, index) => index.toString()}
+              contentContainerStyle={styles.chatContainer}
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+            />
 
-      <View style={styles.inputRow}>
-        <View style={styles.inputFlex}>
-          <TextField
-            placeholder="Type your message..."
-            value={input}
-            onChangeText={setInput}
-          />
-        </View>
-        <Button text="Send" onPress={sendMessage} />
-      </View>
+            <View style={styles.inputRow}>
+              <View style={styles.inputFlex}>
+                <TextInput
+                  placeholder="Type your message..."
+                  placeholderTextColor="#ccc"
+                  value={input}
+                  onChangeText={setInput}
+                  style={styles.input}
+                  multiline
+                />
+              </View>
+              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+                <Text style={styles.sendButtonText}>Send</Text>
+              </TouchableOpacity>
+            </View>
 
-      {loading && <ActivityIndicator size="small" color="#00AFFF" style={{ marginBottom: 10 }} />}
-    </KeyboardAvoidingView>
+            {loading && <ActivityIndicator size="small" color="#00AFFF" style={{ margin: 10 }} />}
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop:5,
     backgroundColor: '#252D3C',
-    paddingTop: 40,
   },
   chatContainer: {
     padding: 10,
+    marginTop:40,
     paddingBottom: 20,
     flexGrow: 1,
   },
@@ -121,9 +139,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#3C4A5A',
     alignSelf: 'flex-start',
   },
-  messageText: {
-    fontSize: 16,
+  userText: {
     color: '#fff',
+    fontSize: 16,
   },
   inputRow: {
     flexDirection: 'row',
@@ -137,4 +155,37 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
+  input: {
+    backgroundColor: '#2C3545',
+    color: '#fff',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  sendButton: {
+    backgroundColor: '#3C9EEA',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
+
+const markdownStyles = {
+  body: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  strong: {
+    fontWeight: 'bold',
+  },
+  heading3: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 4,
+  },
+};
