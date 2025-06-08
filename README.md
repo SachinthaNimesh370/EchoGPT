@@ -6,21 +6,7 @@ EchoGPT is a lightweight AI-powered mobile chatbot app built with **React Native
 
 ## 📁 Folder Structure
 
-EchoGPT/
-├── .expo/
-├── assets/ # App media, icons, etc.
-├── component/ # Custom UI components like Button, TextField
-├── node_modules/
-├── screen/ # App screens (ChatPage, FirstPage)
-│ ├── ChatPage.jsx
-│ └── FirstPage.jsx
-├── .gitignore
-├── App.js # App root
-├── app.json # Expo configuration
-├── index.js
-├── package.json
-├── package-lock.json
-└── README.md # ← You're here!
+<pre> EchoGPT/ ├── .expo/ # Expo internal config ├── assets/ # App media, icons, etc. ├── component/ # Custom UI components (Button, TextField) ├── node_modules/ ├── screen/ # App screens │ ├── ChatPage.jsx │ └── FirstPage.jsx ├── .gitignore ├── App.js # App root ├── app.json # Expo configuration ├── index.js ├── package.json ├── package-lock.json └── README.md # ← You're here! </pre>
 
 yaml
 Copy
