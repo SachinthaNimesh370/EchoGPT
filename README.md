@@ -57,16 +57,11 @@ EchoGPT/
     ```
 4. Run on your device or emulator using Expo Go
 
-## 📝 License
+## 🙏 Acknowledgements
 
-MIT
-
-## 💡 Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
-## 📧 Contact
-
-For questions or feedback, please open an issue in the repository.
+- OpenAI
+- React Native
+- Expo
+- @ronradtke/react-native-markdown-display
 
 
