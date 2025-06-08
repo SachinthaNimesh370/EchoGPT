@@ -1,6 +1,9 @@
 # EchoGPT – AI Chatbot Mobile App (React Native + OpenAI)
+---
+## 🌟 Overview
 
 EchoGPT is a lightweight AI-powered mobile chatbot app built with React Native (Expo) and integrated with OpenAI's GPT-4o-mini model. It provides a conversational interface with a clean UI, Markdown support, and role-based chat design.
+---
 
 ## 📁 Folder Structure
 ```
